@@ -95,3 +95,4 @@ Set values in `frontend/.env`:
 - Use HTTPS in production for secure geolocation and auth.
 - Self registration creates `Intern` role accounts; create `Admin` users from Supabase dashboard/SQL.
 "# internattendo" 
+"# internattendo" 
