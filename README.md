@@ -1,6 +1,7 @@
 # Intern Attendance Management System (MERN + Supabase)
 
 Full-stack attendance system with:
+
 - React + Tailwind frontend
 - Express + Node backend
 - Supabase Auth + PostgreSQL
@@ -33,12 +34,14 @@ Full-stack attendance system with:
 ### 1) Supabase
 
 1. Create a Supabase project.
-2. Run `supabase-schema.sql` in SQL Editor.
-3. Enable Email/Password in Auth.
-4. Create users in Auth and insert corresponding rows in `profiles`:
-   - role must be `Admin` or `Intern`
+1. Run `supabase-schema.sql` in SQL Editor.
+1. Enable Email/Password in Auth.
+1. Create users in Auth and insert corresponding rows in `profiles`:
+
+- role must be `Admin` or `Intern`
 
 Example insert:
+
 ```sql
 insert into public.profiles (id, email, full_name, role)
 values ('<auth_user_uuid>', 'admin@company.com', 'Admin User', 'Admin');
@@ -54,10 +57,13 @@ npm run dev
 ```
 
 Set values in `backend/.env`:
+
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `OFFICE_LAT`, `OFFICE_LON`, `OFFICE_RADIUS_METERS`
+- `OFFICE_LAT`
+- `OFFICE_LON`
+- `OFFICE_RADIUS_METERS`
 - `COMPANY_TIMEZONE`
 
 ### 3) Frontend
@@ -70,6 +76,7 @@ npm run dev
 ```
 
 Set values in `frontend/.env`:
+
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_API_BASE_URL` (default `http://localhost:5000/api`)
@@ -94,5 +101,55 @@ Set values in `frontend/.env`:
 - Geolocation is captured from browser on check-in.
 - Use HTTPS in production for secure geolocation and auth.
 - Self registration creates `Intern` role accounts; create `Admin` users from Supabase dashboard/SQL.
-"# internattendo" 
-"# internattendo" 
+
+## Deploy On Vercel
+
+Deploy this monorepo as two Vercel projects:
+
+- `backend/` as a Node.js serverless API
+- `frontend/` as a static Vite app
+
+### 1) Deploy backend project
+
+1. In Vercel, click Add New Project and import this repository.
+1. Set Root Directory to `backend`.
+1. Keep install/build defaults (`npm install`).
+1. Add backend environment variables:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OFFICE_LAT`
+- `OFFICE_LON`
+- `OFFICE_RADIUS_METERS`
+- `FRONTEND_URL` (set this after frontend deploy, then redeploy backend)
+
+1. Deploy and copy the backend URL, for example `https://your-api.vercel.app`.
+
+### 2) Deploy frontend project
+
+1. Add another Vercel project from the same repository.
+1. Set Root Directory to `frontend`.
+1. Build settings:
+
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+1. Add frontend environment variables:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_API_BASE_URL` = `https://your-api.vercel.app/api`
+
+1. Deploy and copy the frontend URL, for example `https://your-app.vercel.app`.
+
+### 3) Final URL wiring
+
+1. Go back to backend project environment variables.
+1. Set `FRONTEND_URL` to your deployed frontend URL.
+1. Redeploy backend.
+
+### Important
+
+- The backend includes a local `setInterval` absence marker job; this style is not reliable in serverless environments.
+- For production on Vercel, move absence marking to a scheduled Vercel Cron endpoint or Supabase scheduled job.
